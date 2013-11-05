@@ -67,9 +67,9 @@ build_dll: build_ffmpeg input_copy $(DLL) $(EXEC)
 	cp -f $(EXEC) $(WIN_OS_DIR)/$(EXEC)
 	cp -f $(FFMPEG_DIR)/ffmpeg.exe $(WIN_OS_DIR)/ffmpeg.exe
 	cp -f $(WIN_OS_DIR)/* $(BIN_DIR)/.
-	@if [ -d $(DROPBOX_WIN_OS) ]; then \
-		cp -f $(WIN_OS_DIR)/* $(DROPBOX_WIN_OS)/. ; \
-	fi
+ifneq (,$(wildcard $(DROPBOX_WIN_OS) ))
+	cp -f $(WIN_OS_DIR)/* $(DROPBOX_WIN_OS)/.
+endif
 
 input_copy: clean
 	cp -f $(FFMPEG_DIR)/libavcodec/libavcodec.a .

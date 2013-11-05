@@ -33,25 +33,37 @@ all: x86_64 i686 sdl pthreads
 	@echo "installation complete"
 
 x86_64 :
-	@if [ ! -a $(X86_64_GCC) ] then sudo apt-get install gcc-mingw-w64-x86-64 fi
-	@if [ ! -a $(X86_64_GPP) ] then sudo apt-get install g++-mingw-w64-x86-64 fi
+ifeq (,$(wildcard $(X86_64_GCC) ))
+	sudo apt-get install gcc-mingw-w64-x86-64
+endif
+ifeq (,$(wildcard $(X86_64_GPP) ))
+	sudo apt-get install g++-mingw-w64-x86-64
+endif
 
 i686 :
-	@if [ ! -a $(I686_GCC) ] then sudo apt-get install gcc-mingw-w64-i686 fi
-	@if [ ! -a $(I686_GPP) ] then sudo apt-get install g++-mingw-w64-i686 fi
+ifeq (,$(wildcard $(I686_GCC) ))
+	sudo apt-get install gcc-mingw-w64-i686
+endif
+ifeq (,$(wildcard $(I686_GPP) ))
+	sudo apt-get install g++-mingw-w64-i686
+endif
 
 sdl :
-	@if [ ! -d $(X86_64_SDL) ] then cd $(SRC_SDL_X86_64_DIR); sudo make cross fi
-	@if [ ! -d $(I686_SDL)   ] then cd $(SRC_SDL_I686_DIR);   sudo make cross fi
+ifeq (,$(wildcard $(X86_64_SDL) ))
+	cd $(SRC_SDL_X86_64_DIR); sudo make cross
+endif
+ifeq (,$(wildcard $(I686_SDL) ))
+	cd $(SRC_SDL_I686_DIR);   sudo make cross
+endif
 
 pthreads :
-	@if [ ! -a $(X86_64_PTHREAD) ] then \
-		sudo cp $(SRC_PTHREAD_X86_64_INC_DIR)/* $(X86_64_INC_DIR) \
-		sudo cp $(SRC_PTHREAD_X86_64_LIB_DIR)/* $(X86_64_LIB_DIR) \
-		sudo cp $(SRC_PTHREAD_X86_64_BIN_DIR)/* $(X86_64_BIN_DIR) \
-	fi
-	@if [ ! -a $(I686_PTHREAD) ] then \
-		sudo cp $(SRC_PTHREAD_I686_INC_DIR)/* $(I686_INC_DIR) \
-		sudo cp $(SRC_PTHREAD_I686_LIB_DIR)/* $(I686_LIB_DIR) \
-		sudo cp $(SRC_PTHREAD_I686_BIN_DIR)/* $(I686_BIN_DIR) \
-	fi
+ifeq (,$(wildcard $(X86_64_PTHREAD) ))
+	sudo cp $(SRC_PTHREAD_X86_64_INC_DIR)/* $(X86_64_INC_DIR)
+	sudo cp $(SRC_PTHREAD_X86_64_LIB_DIR)/* $(X86_64_LIB_DIR)
+	sudo cp $(SRC_PTHREAD_X86_64_BIN_DIR)/* $(X86_64_BIN_DIR)
+endif
+ifeq (,$(wildcard $(I686_PTHREAD) ))
+	sudo cp $(SRC_PTHREAD_I686_INC_DIR)/* $(I686_INC_DIR)
+	sudo cp $(SRC_PTHREAD_I686_LIB_DIR)/* $(I686_LIB_DIR)
+	sudo cp $(SRC_PTHREAD_I686_BIN_DIR)/* $(I686_BIN_DIR)
+endif

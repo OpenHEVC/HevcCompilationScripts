@@ -1,4 +1,4 @@
-CONFIGURE_FFMPEG = ./configure --disable-shared --enable-static
+CONFIGURE_FFMPEG = ./configure --disable-static --enable-shared
 CONFIGURE_GPAC   = ./configure
 ###############################################################################
 #
