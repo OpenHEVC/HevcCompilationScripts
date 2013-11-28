@@ -1,33 +1,5 @@
-ifeq ($(WIN_OS), w32)
-WIN_OS           = w32
-ARCH             = i686
-else
-WIN_OS           = w64
-ARCH             = x86_64
-endif
-
-WIN_OS_DIR       = ffmpeg_$(WIN_OS)
-BIN_DIR          = $(OPEN_HEVC_DIR)/bin/$(WIN_OS_DIR)
-DROPBOX_WIN_OS   = $(DROPBOX_DIR)/HEVC/DLL/$(WIN_OS_DIR)
-
-PREFIX           = $(ARCH)-w64-mingw32
-CONFIGURE_FFMPEG = ./configure --enable-cross-compile --enable-w32threads --cross-prefix=$(PREFIX)- --arch=$(ARCH) --target-os=mingw32 --enable-memalign-hack --disable-shared --enable-static --disable-debug --enable-runtime-cpudetect --disable-zlib
-
 ###############################################################################
-#
-###############################################################################
-CC           = $(PREFIX)-gcc
-CFLAGS       = -I. -I"$(FFMPEG_DIR)/" -I"$(OPEN_HEVC_DIR)/gpac/modules/openhevc_dec/" -I"$(OPEN_HEVC_DIR)/main_hm/" -I"/usr/$(PREFIX)/include/SDL" -DPIC -Wl,-Bsymbolic -fno-tree-vectorize
-LDFLAGS_DLL  = -L"/usr/$(PREFIX)/lib/" -L. -lavdevice -lavfilter -lavformat -lavcodec -lswscale -lavutil -lws2_32 -lm
-LDFLAGS_EXEC = -L"/usr/$(PREFIX)/lib/" -L. -lSDL  -lavformat -lavcodec -lavutil -lws2_32
-
-OBJ          = sdl.obj getopt.obj main.obj
-DLL          = libLibOpenHevcWrapper.dll
-DEF          = libLibOpenHevcWrapper.def
-EXEC         = hevc_$(WIN_OS_DIR).exe
-
-###############################################################################
-#
+# check source directory
 ###############################################################################
 ifndef OPEN_HEVC_DIR
 $(error OPEN_HEVC_DIR is not set)
@@ -46,11 +18,50 @@ endif
 endif
 
 ###############################################################################
+# set global variable
+###############################################################################
+ifeq ($(WIN_OS), w32)
+WIN_OS          = w32
+ARCH            = i686
+else
+WIN_OS          = w64
+ARCH            = x86_64
+endif
+
+WIN_OS_DIR      = ffmpeg_$(WIN_OS)
+BIN_DIR         = $(OPEN_HEVC_DIR)/bin/$(WIN_OS_DIR)
+DROPBOX_WIN_OS  = $(DROPBOX_DIR)/HEVC/DLL/$(WIN_OS_DIR)
+
+PREFIX          = $(ARCH)-w64-mingw32
+
+ifdef VLC_DIR
+ifneq (,$(wildcard $(VLC_DIR)/vlc_$(WIN_OS) ))
+INSTALL_VLC_DIR = --prefix=$(VLC_DIR)/vlc_$(WIN_OS)/contrib/$(PREFIX)
+endif
+endif
+
+CONFIGURE_LINUX = ./configure --disable-static --enable-shared
+CONFIGURE_WIN   = ./configure $(INSTALL_VLC_DIR) --enable-cross-compile --enable-w32threads --cross-prefix=$(PREFIX)- --arch=$(ARCH) --target-os=mingw32 --enable-memalign-hack --disable-shared --enable-static --disable-debug --enable-runtime-cpudetect --disable-zlib
+
+###############################################################################
+# set compile variable
+###############################################################################
+CC              = $(PREFIX)-gcc
+CFLAGS          = -I. -I"$(FFMPEG_DIR)/" -I"$(OPEN_HEVC_DIR)/gpac/modules/openhevc_dec/" -I"$(OPEN_HEVC_DIR)/main_hm/" -I"/usr/$(PREFIX)/include/SDL" -DPIC -Wl,-Bsymbolic -fno-tree-vectorize
+LDFLAGS_DLL     = -L"/usr/$(PREFIX)/lib/" -L. -lavdevice -lavfilter -lavformat -lavcodec -lswscale -lavutil -lws2_32 -lm
+LDFLAGS_EXEC    = -L"/usr/$(PREFIX)/lib/" -L. -lSDL  -lavformat -lavcodec -lavutil -lws2_32
+
+OBJ             = sdl.obj getopt.obj main.obj
+DLL             = libLibOpenHevcWrapper.dll
+DEF             = libLibOpenHevcWrapper.def
+EXEC            = hevc_$(WIN_OS_DIR).exe
+
+###############################################################################
 #
 ###############################################################################
 all: 
 	@echo "usage :"
-	@echo "make w32 or make w64"
+	@echo "make linux or make w32 or make w64"
 
 w32: 
 	make build_dll WIN_OS=w32
@@ -58,10 +69,13 @@ w32:
 w64: 
 	make build_dll WIN_OS=w64
 
+linux:
+	make build_linux
+
 ###############################################################################
-#
+# build_dll
 ###############################################################################
-build_dll: build_ffmpeg input_copy $(DLL) $(EXEC)
+build_dll: build_win input_copy $(DLL) $(EXEC)
 	cp -f $(DLL)  $(WIN_OS_DIR)/$(DLL)
 	cp -f $(DEF)  $(WIN_OS_DIR)/$(DEF)
 	cp -f $(EXEC) $(WIN_OS_DIR)/$(EXEC)
@@ -80,8 +94,15 @@ input_copy: clean
 	cp -f $(FFMPEG_DIR)/libswscale/libswscale.a .
 	cp -f $(WIN_OS_DIR)/SDL.dll .
 
-build_ffmpeg:
-	cd $(FFMPEG_DIR); make distclean; $(CONFIGURE_FFMPEG); make -j 4
+###############################################################################
+# build ffmpeg
+###############################################################################
+build_win:
+	cd $(FFMPEG_DIR); make distclean; $(CONFIGURE_WIN); make -j 4
+
+build_linux:
+	cd $(FFMPEG_DIR); sudo make uninstall; make distclean; $(CONFIGURE_LINUX); make -j 4; sudo make install
+
 
 ###############################################################################
 # libLibOpenHevcWrapper.dll
