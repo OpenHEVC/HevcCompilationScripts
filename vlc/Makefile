@@ -23,11 +23,11 @@ endif
 ifeq ($(WIN_OS), w32)
 WIN_OS          = w32
 ARCH            = i686
-VLC_ZIP         = vlc-2.2.0-git-win32.zip
+VLC_ZIP         = vlc-2.2.0-git-win32
 else
 WIN_OS          = w64
 ARCH            = x86_64
-VLC_ZIP         = vlc-2.2.0-git-win64.zip
+VLC_ZIP         = vlc-2.2.0-git-win64
 endif
 
 WIN_OS_DIR      = vlc_$(WIN_OS)
@@ -65,7 +65,7 @@ linux:
 build_win: update_vlc_win build_ffmpeg_win 
 	cd $(VLC_DIR)/$(WIN_OS_DIR)/win32; $(CONFIGURE_WIN); make -j 4; make package-win32-zip
 ifneq (,$(wildcard $(DROPBOX_WIN_OS) ))
-	cd $(VLC_DIR)/$(WIN_OS_DIR)/win32; cp -f $(VLC_ZIP) $(DROPBOX_WIN_OS)/.
+	cd $(VLC_DIR)/$(WIN_OS_DIR)/win32; cp -f $(VLC_ZIP).zip $(DROPBOX_WIN_OS)/$(VLC_ZIP)_$(shell date +"%d-%m-%y").zip
 endif
 
 build_linux:update_vlc_linux build_ffmpeg_linux 
