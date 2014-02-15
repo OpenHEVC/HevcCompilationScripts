@@ -38,7 +38,6 @@ PREFIX          = $(ARCH)-w64-mingw32
 CONFIGURE_LINUX = ./configure --disable-lua --disable-mad --disable-a52 --disable-libgcrypt
 CONFIGURE_WIN   = ../extras/package/win32/configure.sh --host=$(PREFIX) --disable-chromaprint --disable-zlib
 
-
 ###############################################################################
 # set compile variable
 ###############################################################################
@@ -77,7 +76,11 @@ build_linux:update_vlc_linux build_ffmpeg_linux
 update_vlc_win:
 ifeq (,$(wildcard $(VLC_DIR)/$(WIN_OS_DIR) ))
 	cd $(VLC_DIR); git clone git://git.videolan.org/vlc.git $(WIN_OS_DIR)
-	cd $(VLC_DIR)/$(WIN_OS_DIR); mkdir -p contrib/win32; cd contrib/win32; ../bootstrap --host=$(PREFIX); make prebuilt
+	cd $(VLC_DIR)/$(WIN_OS_DIR); mkdir -p contrib/win32; cd contrib/win32
+ifeq ($(WIN_OS), w64)
+	ln -s $(PWD)/vlc-contrib-$(PREFIX)-20130408.tar.bz2 $(VLC_DIR)/$(WIN_OS_DIR)/contrib/win32/vlc-contrib-$(PREFIX)-latest.tar.bz2
+endif
+	cd $(VLC_DIR)/$(WIN_OS_DIR)/contrib/win32; ../bootstrap --host=$(PREFIX); make prebuilt
 	cd $(VLC_DIR)/$(WIN_OS_DIR); ./bootstrap; mkdir win32
 endif
 
