@@ -29,8 +29,13 @@ ARCH            = x86_64
 endif
 
 WIN_OS_DIR      = ffmpeg_$(WIN_OS)
+ifeq ($(SHVC), 1)
+BIN_DIR         = $(OPEN_HEVC_DIR)/bin/shvc/$(WIN_OS_DIR)
+DROPBOX_WIN_OS  = $(DROPBOX_DIR)/SHVC/DLL/$(WIN_OS_DIR)
+else
 BIN_DIR         = $(OPEN_HEVC_DIR)/bin/$(WIN_OS_DIR)
 DROPBOX_WIN_OS  = $(DROPBOX_DIR)/HEVC/DLL/$(WIN_OS_DIR)
+endif
 
 PREFIX          = $(ARCH)-w64-mingw32
 
@@ -61,16 +66,19 @@ EXEC            = hevc_$(WIN_OS_DIR).exe
 ###############################################################################
 all: 
 	@echo "usage :"
-	@echo "make linux or make w32 or make w64"
+	@echo "make linux or make w32 or make w64 or shvc_w64"
 
 w32: 
-	make build_dll WIN_OS=w32
+	make build_dll WIN_OS=w32 SHVC=0
 
 w64: 
-	make build_dll WIN_OS=w64
+	make build_dll WIN_OS=w64 SHVC=0
+
+shvc_w64: 
+	make build_dll WIN_OS=w64 SHVC=1
 
 linux:
-	make build_linux
+	make build_linux SHVC=0
 
 ###############################################################################
 # build_dll
