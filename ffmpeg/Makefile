@@ -107,7 +107,7 @@ input_copy: clean
 # build ffmpeg
 ###############################################################################
 build_win:
-	cd $(FFMPEG_DIR); make distclean; $(CONFIGURE_WIN); make -j 4
+	cd $(FFMPEG_DIR); make distclean; $(CONFIGURE_WIN); make -j 4; sudo make install
 
 build_linux:
 	cd $(FFMPEG_DIR); sudo make uninstall; make distclean; $(CONFIGURE_LINUX); make -j 4; sudo make install
