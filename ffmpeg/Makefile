@@ -46,13 +46,13 @@ endif
 endif
 
 CONFIGURE_LINUX = ./configure --disable-static --enable-shared
-CONFIGURE_WIN   = ./configure $(INSTALL_VLC_DIR) --enable-cross-compile --enable-w32threads --cross-prefix=$(PREFIX)- --arch=$(ARCH) --target-os=mingw32 --enable-memalign-hack --disable-shared --enable-static --disable-debug --enable-runtime-cpudetect --disable-zlib
+CONFIGURE_WIN   = ./configure $(INSTALL_VLC_DIR) --enable-cross-compile --enable-w32threads --cross-prefix=$(PREFIX)- --arch=$(ARCH) --target-os=mingw32 --enable-memalign-hack --disable-shared --enable-static --disable-debug --enable-runtime-cpudetect --disable-zlib --prefix=/usr/$(PREFIX)
 
 ###############################################################################
 # set compile variable
 ###############################################################################
 CC              = $(PREFIX)-gcc
-CFLAGS          = -I. -I"$(FFMPEG_DIR)/" -I"$(OPEN_HEVC_DIR)/gpac/modules/openhevc_dec/" -I"$(OPEN_HEVC_DIR)/main_hm/" -I"/usr/$(PREFIX)/include/SDL" -DPIC -Wl,-Bsymbolic -fno-tree-vectorize
+CFLAGS          = -DUSE_SDL -I. -I"$(FFMPEG_DIR)/" -I"$(OPEN_HEVC_DIR)/gpac/modules/openhevc_dec/" -I"$(OPEN_HEVC_DIR)/main_hm/" -I"/usr/$(PREFIX)/include/SDL" -DPIC -Wl,-Bsymbolic -fno-tree-vectorize
 LDFLAGS_DLL     = -L"/usr/$(PREFIX)/lib/" -L. -lavdevice -lavfilter -lavformat -lavcodec -lswscale -lavutil -lswresample -lws2_32 -lm
 LDFLAGS_EXEC    = -L"/usr/$(PREFIX)/lib/" -L. -lSDL  -lavformat -lavcodec -lavutil -lws2_32
 
