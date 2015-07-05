@@ -56,7 +56,7 @@ CFLAGS          = -DUSE_SDL -I. -I"$(FFMPEG_DIR)/" -I"$(OPEN_HEVC_DIR)/gpac/modu
 LDFLAGS_DLL     = -L"/usr/$(PREFIX)/lib/" -L. -lavdevice -lavfilter -lavformat -lavcodec -lswscale -lavutil -lswresample -lws2_32 -lm
 LDFLAGS_EXEC    = -L"/usr/$(PREFIX)/lib/" -L. -lSDL  -lavformat -lavcodec -lavutil -lws2_32
 
-OBJ             = sdl.obj getopt.obj main.obj
+OBJ             = sdl.obj getopt.obj main.obj SDL_framerate.obj
 DLL             = libLibOpenHevcWrapper.dll
 DEF             = libLibOpenHevcWrapper.def
 EXEC            = hevc_$(WIN_OS_DIR).exe
@@ -140,6 +140,8 @@ sdl.obj: $(OPEN_HEVC_DIR)/main_hm/sdl.c
 getopt.obj: $(OPEN_HEVC_DIR)/main_hm/getopt.c
 	$(CC) -o $@ -c $< $(CFLAGS)
 main.obj: $(OPEN_HEVC_DIR)/main_hm/main.c
+	$(CC) -o $@ -c $< $(CFLAGS)
+SDL_framerate.obj: $(OPEN_HEVC_DIR)/main_hm/SDL_framerate.c
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 ###############################################################################

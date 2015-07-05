@@ -39,4 +39,4 @@ build_ffmpeg_linux:
 
 build_gpac:
 	cd $(GPAC_DIR); sudo make uninstall; make distclean; $(CONFIGURE_GPAC); make -j 4; sudo make install
-	sudo rm /usr/local/lib/gpac/gm_ffmpeg_in.so
+#	sudo rm /usr/local/lib/gpac/gm_ffmpeg_in.so
